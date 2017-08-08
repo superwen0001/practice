@@ -1,11 +1,13 @@
 package com.github.superwen0001.practice;
 
+import io.prometheus.client.Collector;
 import io.prometheus.client.CollectorRegistry;
 import io.prometheus.client.Gauge;
 import io.prometheus.client.exporter.PushGateway;
 
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
+import java.util.Enumeration;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 
@@ -37,6 +39,11 @@ class PushThread implements  Runnable{
             try {
                 TimeUnit.SECONDS.sleep(10);
 //            registry.
+                Enumeration<Collector.MetricFamilySamples> enumeration  = registry.metricFamilySamples();
+
+                while (enumeration.hasMoreElements()){
+                    System.out.println(enumeration.nextElement());
+                }
                 pg.push(registry, "wsl_test_job"+ ManagementFactory.getRuntimeMXBean().getName());
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -55,12 +62,13 @@ class TaskThread implements Runnable{
 
     public TaskThread(CollectorRegistry registry) {
         this.registry = registry;
-        inprogressRequests = Gauge.build().name("inprogress_requests").help("Inprogress requests.").register(registry);
+        inprogressRequests = Gauge.build().name("inprogress_requests").help("Inprogress requests.").labelNames("t1","t2").register(registry);
     }
 
     public void run() {
         while(true){
-            inprogressRequests.inc();
+            inprogressRequests.labels("aaa","bbb").inc();
+            inprogressRequests.labels("a2", "b2").inc(10);
             try {
                 TimeUnit.SECONDS.sleep(ThreadLocalRandom.current().nextInt(10));
             } catch (InterruptedException e) {
