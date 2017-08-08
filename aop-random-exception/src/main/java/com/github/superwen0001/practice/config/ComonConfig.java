@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
 public class ComonConfig {
 
     @Bean
-    public RandomlyThrowsExceptionAspect randomlyThrowsExceptionAspect(){
+    public RandomlyThrowsExceptionAspect randomlyThrowsExceptionAspect() {
         final int order = Byte.MAX_VALUE;
         RandomlyThrowsExceptionAspect randomlyThrowsExceptionAspect = new RandomlyThrowsExceptionAspect(order);
         return randomlyThrowsExceptionAspect;
